@@ -1,0 +1,13 @@
+package br.com.senai.hentalSchedules;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class HentalSchedulesApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
