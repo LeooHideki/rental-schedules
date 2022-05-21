@@ -21,7 +21,6 @@ public class AppConfig implements WebMvcConfigurer {
 	private AppInterceptor interceptor;
 
 	@Override
-
 	public void addInterceptors(InterceptorRegistry registry) {
 		// adiciona o Interceptor na aplicação
 		registry.addInterceptor(interceptor);

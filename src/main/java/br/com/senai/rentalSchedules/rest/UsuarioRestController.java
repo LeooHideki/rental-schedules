@@ -109,7 +109,7 @@ public class UsuarioRestController {
 			result.put("user", usuario);
 			result.put("access_token", tokenJwt);
 			
-			return  ResponseEntity.ok(tokenJwt);
+			return  ResponseEntity.ok(result);
 		}else {
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
