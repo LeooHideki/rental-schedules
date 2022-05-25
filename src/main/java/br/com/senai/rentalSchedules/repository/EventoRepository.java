@@ -8,4 +8,6 @@ import br.com.senai.rentalSchedules.model.Periodo;
 public interface EventoRepository extends PagingAndSortingRepository<Evento, Long>{
 	
 	public Evento findByDataReservadaAndPeriodo(String dataReservada, Periodo periodo);
+	
+	public Evento findByUsuarioIdAndId(Long idUsuario, Long id);
 }

@@ -24,7 +24,6 @@ public class Usuario {
 	private String email;
 	@NotNull(message="Nome não pode ser nulo")
 	private String nome;
-	@Column(unique = true)
 	@JsonProperty(access = Access.WRITE_ONLY)
 	private String senha;
 	// usuario ativado ou desativado

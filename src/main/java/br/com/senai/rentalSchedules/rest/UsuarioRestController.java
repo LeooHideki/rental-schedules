@@ -86,6 +86,7 @@ public class UsuarioRestController {
 		//verifica se o usuário não é nulo
 		System.out.println("TESTETESTE");
 		if(usuario != null) {
+			System.out.println("User is " + usuario.getNome());
 			//variável para inserir dados no payload
 			Map<String, Object> payload = new HashMap<String, Object>();
 			payload.put("id_user", usuario.getId());
@@ -107,10 +108,12 @@ public class UsuarioRestController {
 			
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("user", usuario);
-			result.put("access_token", tokenJwt);
+			result.put("access_token", tokenJwt.getToken());
 			
 			return  ResponseEntity.ok(result);
 		}else {
+			System.out.println("User is NOK");
+
 			return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		}
 	}
