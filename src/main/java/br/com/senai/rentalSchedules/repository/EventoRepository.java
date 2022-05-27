@@ -1,5 +1,7 @@
 package br.com.senai.rentalSchedules.repository;
 
+import java.util.List;
+
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import br.com.senai.rentalSchedules.model.Evento;
@@ -10,4 +12,6 @@ public interface EventoRepository extends PagingAndSortingRepository<Evento, Lon
 	public Evento findByDataReservadaAndPeriodo(String dataReservada, Periodo periodo);
 	
 	public Evento findByUsuarioIdAndId(Long idUsuario, Long id);
+	
+	public List<Evento> findByUsuarioId(Long idUsuario);
 }

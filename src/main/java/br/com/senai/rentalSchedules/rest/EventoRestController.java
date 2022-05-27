@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -82,7 +83,6 @@ public class EventoRestController {
 		return ResponseEntity.ok(createdEvents);
 	}
 	@Privado
-	@PrivadoAdm
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> excluirEvento(HttpServletRequest headers,@PathVariable("id") Long idEvento) {
 		
@@ -98,5 +98,41 @@ public class EventoRestController {
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		
 	}
+	
+	
+	@Privado
+	@RequestMapping(value = "/user/{id}", method = RequestMethod.GET)
+	public ResponseEntity<Object> eventoPorUsuario (@PathVariable("id") Long idUsuario) {
+			try {
+				List<Evento> eventos = repository.findByUsuarioId(idUsuario);
+				return ResponseEntity.ok(eventos);
+			} catch (Exception err) {
+				err.printStackTrace();
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, err.getMessage(), err.getClass().getName());
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		
+	}
+	
+	
+	@Privado
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> atualizarEvento(HttpServletRequest headers,@PathVariable("id") Long idEvento) {
+
+		DescriptJWT desc = new DescriptJWT();
+		Map<String, Claim> claims = desc.decodifica(headers.getHeader("Authorization"));
+		String b = ""+claims.get("id_user");
+		Long idUser = Long.parseLong(b);
+		Evento event = repository.findByUsuarioIdAndId(idUser, idEvento);
+		if(event != null) {
+			repository.save(event);
+			return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
+		}
+		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+		
+	}
+	
+	
+	
 
 }
