@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.senai.rentalSchedules.util.EnviaEmailService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,6 +38,9 @@ import br.com.senai.rentalSchedules.util.DescriptJWT;
 public class EventoRestController {
 	@Autowired
 	private EventoRepository repository;
+
+	@Autowired
+	private EnviaEmailService send;
 
 	@Publico
 	@RequestMapping(value = "", method = RequestMethod.GET)
@@ -145,8 +150,12 @@ public class EventoRestController {
 
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 	}
-	
-	
+
+	@Publico
+	@RequestMapping(value = "/email", method = RequestMethod.GET)
+	public ResponseEntity<Object> testeEmail () {
+		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+	}
 	
 
 }

@@ -7,8 +7,9 @@ import br.com.senai.rentalSchedules.model.Usuario;
 
 
 public interface UsuarioRepository extends PagingAndSortingRepository<Usuario, Long>{
-	
 	public Usuario findByEmailAndSenha(String email, String senha);
-	
+
+	public Usuario findByEmail(String email);
+
 }
 	

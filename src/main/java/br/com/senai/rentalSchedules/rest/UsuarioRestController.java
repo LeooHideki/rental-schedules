@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import br.com.senai.rentalSchedules.util.EnviaEmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -35,7 +36,9 @@ public class UsuarioRestController {
 	public static final String SECRET = "D123DDAS@";
 	@Autowired
 	private UsuarioRepository repository;
-	
+
+	@Autowired
+	private EnviaEmailService send;
 	@Publico
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarUsuario(@RequestBody Usuario usuario) {
@@ -144,5 +147,40 @@ public class UsuarioRestController {
 	}
 
 
+	@Publico
+	@RequestMapping(value = "/alterar-senha/{email}", method = RequestMethod.GET)
+	public ResponseEntity<Object> testeEmail (@PathVariable("email") String emailUser) {
+
+		Usuario usuario = repository.findByEmail(emailUser);
+
+		if(usuario != null) {
+
+			Map<String, Object> payload = new HashMap<String, Object>();
+			payload.put("id_user", usuario.getId());
+			payload.put("role", usuario.isRole());
+			Calendar expiracao = Calendar.getInstance();
+			expiracao.add(Calendar.HOUR, 1);
+			Algorithm algoritmo = Algorithm.HMAC256(SECRET);
+			TokenJWT tokenJwt = new TokenJWT();
+			tokenJwt.setToken(JWT.create()
+					.withPayload(payload)
+					.withIssuer(EMISSOR)
+					.withExpiresAt(expiracao.getTime())
+					.sign(algoritmo));
+
+
+			String urlReset = "http://localhost:3000/alterar-senha/"+ tokenJwt.getToken();
+			send.enviaEmail(
+					usuario.getEmail(),
+					"Você pediu um reset de senha, clique nesse link e recupere a senha -> " + urlReset,
+					"Reset de senha"
+			);
+
+				return new ResponseEntity<Object>(HttpStatus.OK);
+		}
+
+		return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+
+	}
 	
 }
