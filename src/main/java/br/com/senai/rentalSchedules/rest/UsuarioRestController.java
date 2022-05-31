@@ -36,7 +36,7 @@ public class UsuarioRestController {
 	@Autowired
 	private UsuarioRepository repository;
 	
-	@PrivadoAdm
+	@Publico
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarUsuario(@RequestBody Usuario usuario) {
 		try {

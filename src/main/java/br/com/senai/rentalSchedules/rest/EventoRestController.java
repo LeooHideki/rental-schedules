@@ -3,6 +3,7 @@ package br.com.senai.rentalSchedules.rest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -85,16 +86,23 @@ public class EventoRestController {
 	@Privado
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> excluirEvento(HttpServletRequest headers,@PathVariable("id") Long idEvento) {
-		
+
+		Optional<Evento> event = repository.findById(idEvento);
+		if(!event.isPresent()) {
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+
 		DescriptJWT desc = new DescriptJWT();
 		Map<String, Claim> claims = desc.decodifica(headers.getHeader("Authorization"));
-		String a = ""+claims.get("id_user");
-		Long idUser = Long.parseLong(a);
-		Evento event = repository.findByUsuarioIdAndId(idUser, idEvento);
-		if(event != null) {
-			repository.delete(event);
+		Boolean roleUser = Boolean.parseBoolean(""+claims.get("role"));
+		String idUsuario = ""+claims.get("id_user");
+		Long idUser = Long.parseLong(idUsuario);
+		System.out.println(claims.get("role"));
+		if(roleUser || idUser == event.get().getUsuario().getId()){
+			repository.delete(event.get());
 			return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
 		}
+
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 		
 	}
@@ -117,19 +125,25 @@ public class EventoRestController {
 	
 	@Privado
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<Object> atualizarEvento(HttpServletRequest headers,@PathVariable("id") Long idEvento) {
+	public ResponseEntity<Object> atualizarEvento(HttpServletRequest headers,@PathVariable("id") Long idEvento, @RequestBody Evento eventoAtualizado) {
+
+		Optional<Evento> event = repository.findById(idEvento);
+		if(!event.isPresent()) {
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
 
 		DescriptJWT desc = new DescriptJWT();
 		Map<String, Claim> claims = desc.decodifica(headers.getHeader("Authorization"));
-		String b = ""+claims.get("id_user");
-		Long idUser = Long.parseLong(b);
-		Evento event = repository.findByUsuarioIdAndId(idUser, idEvento);
-		if(event != null) {
-			repository.save(event);
+		Boolean roleUser = Boolean.parseBoolean(""+claims.get("role"));
+		String idUsuario = ""+claims.get("id_user");
+		Long idUser = Long.parseLong(idUsuario);
+		System.out.println(claims.get("role"));
+		if(roleUser || idUser == event.get().getUsuario().getId()){
+			repository.save(eventoAtualizado);
 			return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
 		}
+
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-		
 	}
 	
 	
