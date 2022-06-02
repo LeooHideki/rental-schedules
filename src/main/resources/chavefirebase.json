@@ -1,0 +1,12 @@
+{
+"type": "service_account",
+"project_id": "rental-schedules",
+"private_key_id": "5936fe6a09882baeddb350fcfdf739c27c94ced0",
+"private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDh2Uiyi+zAvNa0\n2BIV3yPpX1jaOyjrq+oiu5FjHMT8HuXX/PQJdd5L0msgs1wGSply14EmaKtHH9cX\n55LiTNneicDsv0Bpzq1nka4duGuJK9yKKSYuLM11ARQlIctqS3YfN7jo8+y3b2q/\ntU3czfecQxb1dQpzYKU10O15jHyXkFFE8heWFY5zivyhk5IYwLZILT9aON/5N9Ri\nw5MhevvX9aMSBPrbT82qyLXL0nqPq/UBv+LOtwMZP0B+CEamWKiNHSKR/n2kUX5p\nJ1NzukI6+SVHTEwUn8XRQJlAdug/FJWWb8CDXRS2ooC6BB6jOLbocw/gmjZB9YRg\nSWpC9XZHAgMBAAECggEAAT2zM4pwY4iMND63OojrYj2kk2sszWmT08LLMF4RONgC\n6AcL4IefHFkGfAGWZY4q9MkwUeSvxlkD2N6c9cvnT5/CrgjVAIRpAS/zDXt4QPIE\nTYd6f67KJrS/+l/Hqku9/+v2WDmLSeaoPFdlP996h+j5zKFYm6ofsVPYN4xQq/96\nKIaOx1TCPGM6ZG+pMcBU9RFZjV87OR5OITgajclXGMaR96yLgz7O1zLS1NrCQaax\n88UqcoF1/waxq+uF8BwcGH2WDxq9h01QbigdhRYUQZxogod510TQbtsprY7hNCnH\ngrL6GQ4WE9QPd0+ydwaPuDlMEKqEc5R5nNRCjM7X3QKBgQD01G6+1cShcFMSWUao\n323iPuOpIlMgrSoIbS96hfzMhbgmCWbiAXEUtdrXNvu9NbJo4TTyDG+smZOHjZie\nHb/6rPMdgLq0cVETfv6CFTFyHlaUFYXgmd5F0VF7AZzCcbeMmC10XWVM8ENeb0j+\nbj+DG1JymiTou9CCzaUw4WES/QKBgQDsJyf8ZkMeINR7M4dY19SM3iD7Rp/PiLZN\nEUn85MEswDSqpNUKU1qs5q34iYTkodMafwoIXd+ZcuANIXvLHqADpqyIKADNJYoC\nlsSyHeA6KwX4VTXh/OwPUsSCUm2NiuzqL9wksFs1dnx6DszAiYyI51VRhn80kvnC\neleeu/h7kwKBgBwtwx1Vz07hdb475kUTijsrD9rsp3KwW5Eit/87IrCLh3lhRaUn\nk1NV5v00R98sKf+mRAjD46qS9ob4hiNUuz7n3wd7RIH2NOWwjSx9sfY3hbF/lKwY\nKZwRjnZA5kD/A6g776dgBIPJd4eL+XPHTqoRX/juwubCjyou7x9kIV8lAoGBANOQ\nTNFhaDXgoZtyUYo1afV9tzyGS/vodbHbkFZhNfL6ivRp0XZ7sJt/2lH0GbuegnqV\nX46ZUw2tDa6V1crmN+KteppMhFNFkzu4iKUuAMj77FBLPoekSHN96hD6+ay5zoAL\nuoSf/kaKTQAorCS91cp8vUHZZbLbDai+ZCsQKY/DAoGAAyHWG8jIO79P9oF6Bt9w\n/Zkmcyc4Vg1TKHZGzEFXaA9zP8F6Lul4zVifB8f3pvpSC4osJIfZOeYxrsDB7ToQ\nUj8Or5uWhL1615chAnnExhDvG3vBM4PsY8WSu4CUX6f+uc/YxMdYYibfGBMGKa/7\nl35At6E4hEzIKGYmjPhD0m4=\n-----END PRIVATE KEY-----\n",
+"client_email": "firebase-adminsdk-8nugp@rental-schedules.iam.gserviceaccount.com",
+"client_id": "101840926023454924238",
+"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+"token_uri": "https://oauth2.googleapis.com/token",
+"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+"client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-8nugp%40rental-schedules.iam.gserviceaccount.com"
+}
