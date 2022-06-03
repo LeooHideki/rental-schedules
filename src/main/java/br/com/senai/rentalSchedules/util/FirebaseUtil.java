@@ -23,7 +23,7 @@ public class FirebaseUtil {
 	//variável para acessar e manipular o storage
 	private Storage storage;
 	//constante para o nome do bucket
-	private final String BUCKET_NAME = "rentalschedules.appspot.com";
+	private final String BUCKET_NAME = "rental-schedules.appspot.com";
 	//constante para o prefixo da URL
 	private final String PREFIX = "https://firebasestorage.googleapis.com/v0/b/"+BUCKET_NAME+"/o/";
 	//constante para o sufixo da URL

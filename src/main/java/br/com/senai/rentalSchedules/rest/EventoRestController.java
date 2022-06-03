@@ -1,5 +1,6 @@
 package br.com.senai.rentalSchedules.rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,31 +8,28 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import br.com.senai.rentalSchedules.util.EnviaEmailService;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.auth0.jwt.interfaces.Claim;
-import com.google.api.client.http.HttpHeaders;
 
 import br.com.senai.rentalSchedules.annotation.Privado;
-import br.com.senai.rentalSchedules.annotation.PrivadoAdm;
 import br.com.senai.rentalSchedules.annotation.Publico;
 import br.com.senai.rentalSchedules.model.Erro;
 import br.com.senai.rentalSchedules.model.Evento;
-import br.com.senai.rentalSchedules.model.Usuario;
 import br.com.senai.rentalSchedules.repository.EventoRepository;
 import br.com.senai.rentalSchedules.util.DescriptJWT;
+import br.com.senai.rentalSchedules.util.EnviaEmailService;
+import br.com.senai.rentalSchedules.util.FirebaseUtil;
 
 @RestController
 @RequestMapping("/api/eventos")
@@ -41,7 +39,10 @@ public class EventoRestController {
 
 	@Autowired
 	private EnviaEmailService send;
-
+	
+	@Autowired
+	private FirebaseUtil fireUtil;
+	
 	@Publico
 	@RequestMapping(value = "", method = RequestMethod.GET)
 	public ResponseEntity<Iterable<Evento>> pegarEventos() {
@@ -157,5 +158,39 @@ public class EventoRestController {
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 	}
 	
+	
+	@Publico
+	@RequestMapping(value = "/send-images/{id}", method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<Object> salvarImagens (@RequestPart MultipartFile[] images, @PathVariable("id") Long idEvento) {
+		Optional<Evento> evento = repository.findById(idEvento);
+
+		if(evento.get() == null){
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+
+		String urlSalvas = evento.get().getImagens() == null ? "" : evento.get().getImagens();
+
+
+		for (MultipartFile arquivo : images) {
+			if (arquivo.getOriginalFilename().isEmpty()) {continue;}
+			try {
+				urlSalvas += fireUtil.upload(arquivo) + ";";
+			} catch (IOException err) {
+				err.printStackTrace();
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, err.getMessage(), err.getClass().getName());
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+
+		evento.get().setImagens(urlSalvas);
+		try {
+			repository.save(evento.get());
+		} catch (Exception err) {
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, err.getMessage(), err.getClass().getName());
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+			return ResponseEntity.ok(evento.get());
+		}
 
 }
