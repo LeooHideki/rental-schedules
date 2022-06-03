@@ -58,6 +58,7 @@ public class AppInterceptor implements HandlerInterceptor {
 							return true;
 						}
 						
+						
 						response.sendError(HttpStatus.UNAUTHORIZED.value(), "Você não tem auth");
 						return false;
 					}

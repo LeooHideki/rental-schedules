@@ -1,5 +1,6 @@
 package br.com.senai.rentalSchedules.rest;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -43,6 +46,11 @@ public class UsuarioRestController {
 	@RequestMapping(value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Object> criarUsuario(@RequestBody Usuario usuario) {
 		try {
+			Usuario usuarioExiste = repository.findByMatricula(usuario.getMatricula());
+			if(usuarioExiste != null && !usuarioExiste.isStatus()) {
+				usuario.setRole(true);
+				usuario.setId(usuarioExiste.getId());
+			}
 			repository.save(usuario);
 			return ResponseEntity.created(URI.create("/api/usuario/" + usuario.getId())).body(usuario);
 		} catch (DataIntegrityViolationException e) {
@@ -86,9 +94,15 @@ public class UsuarioRestController {
 	public ResponseEntity<Object> logar(@RequestBody Usuario usuario){
 		//buscar o usuário no banco de dados
 		usuario = repository.findByEmailAndSenha(usuario.getEmail(), usuario.getSenha());
+		
 		//verifica se o usuário não é nulo
 		System.out.println("TESTETESTE");
 		if(usuario != null) {
+			
+			if(!usuario.isStatus()) {
+				return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			}
+			
 			System.out.println("User is " + usuario.getNome());
 			//variável para inserir dados no payload
 			Map<String, Object> payload = new HashMap<String, Object>();
@@ -121,14 +135,14 @@ public class UsuarioRestController {
 		}
 	}
 	
-	@Publico
+	@PrivadoAdm
 	@RequestMapping(value = "/lista", method = RequestMethod.GET)
 	public Iterable<Usuario> listarUsuario(){
-		return repository.findAll();
+		return repository.findAllByStatus(true);
 		
 	}
 	
-	@Publico
+	@PrivadoAdm
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> inativarUsuario(@PathVariable("id") Long idUsuario) {
 		Optional<Usuario> usuario = repository.findById(idUsuario);
@@ -182,5 +196,9 @@ public class UsuarioRestController {
 		return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
 
 	}
+	
+	
+	
+	
 	
 }
