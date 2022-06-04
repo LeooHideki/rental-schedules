@@ -2,6 +2,7 @@ package br.com.senai.rentalSchedules.rest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -94,12 +95,16 @@ public class EventoRestController {
 	}
 
 	@Privado
-	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Object> excluirEvento(HttpServletRequest headers, @PathVariable("id") Long idEvento) {
-
-		Optional<Evento> event = repository.findById(idEvento);
-		if (!event.isPresent()) {
-			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+	@RequestMapping(value = "/delete", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> excluirEvento(HttpServletRequest headers, @RequestBody Iterable<Long> ids) {
+		
+		System.out.println("PASAPASPASSAP");
+		Iterable<Evento> eventos = repository.findAllById(ids);
+		
+		for (Evento evento : eventos) {
+			if (evento == null) {
+				return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+			}
 		}
 
 		DescriptJWT desc = new DescriptJWT();
@@ -107,14 +112,23 @@ public class EventoRestController {
 		Boolean roleUser = Boolean.parseBoolean("" + claims.get("role"));
 		String idUsuario = "" + claims.get("id_user");
 		Long idUser = Long.parseLong(idUsuario);
-		System.out.println(claims.get("role"));
-		if (roleUser || idUser == event.get().getUsuario().getId()) {
-			repository.delete(event.get());
-			return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
+
+		
+		List<Long> idsDelete = new ArrayList<Long>();
+		for (Evento evento : eventos) {
+			if (roleUser || idUser == evento.getUsuario().getId()) {
+				idsDelete.add(evento.getId());
+				repository.delete(evento);
+			} else {
+				return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+			}
 		}
+		
 
-		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
-
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("idsDelete", idsDelete);
+		
+		return  ResponseEntity.ok(result);
 	}
 
 	@Privado
@@ -229,7 +243,7 @@ public class EventoRestController {
 			return new ResponseEntity<Object>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
+		return ResponseEntity.ok(fotos);
 	
 	}
 
