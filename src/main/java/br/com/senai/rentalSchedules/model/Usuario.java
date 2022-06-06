@@ -33,6 +33,7 @@ public class Usuario {
 	@Column(unique = true)
 	@NotNull(message = "Matrícula não pode ser nulo")
 	private String matricula;
+	private String imagem;
 	
 	
 	//aplica hash na senha

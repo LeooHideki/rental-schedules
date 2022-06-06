@@ -40,6 +40,7 @@ public class EnviaEmailService {
                     InternetAddress.parse(destinatario));
             message.setSubject(titulo);
             message.setText(mensagem);
+            message.setContent(mensagem, "text/html; charset=utf-8");
 
             Transport.send(message);
 

@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.senai.rentalSchedules.annotation.PrivadoAdm;
 import br.com.senai.rentalSchedules.util.EnviaEmailService;
 import br.com.senai.rentalSchedules.util.FirebaseUtil;
 
@@ -118,6 +119,12 @@ public class EventoRestController {
 		for (Evento evento : eventos) {
 			if (roleUser || idUser == evento.getUsuario().getId()) {
 				idsDelete.add(evento.getId());
+				for (String foto: evento.verFotos()) {
+					if(foto.isEmpty()){
+						continue;
+					}
+					fireUtil.deletar(foto);
+				}
 				repository.delete(evento);
 			} else {
 				return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
@@ -244,7 +251,46 @@ public class EventoRestController {
 		}
 		
 		return ResponseEntity.ok(fotos);
-	
+	}
+
+
+	@PrivadoAdm
+	@RequestMapping(value = "imagens/{nfoto}/{evento}", method = RequestMethod.DELETE)
+	public ResponseEntity<Object> excluirFotos(HttpServletRequest headers, @PathVariable("nfoto") Integer nfoto, @PathVariable("evento") Long idEvento) {
+
+		DescriptJWT desc = new DescriptJWT();
+		Map<String, Claim> claims = desc.decodifica(headers.getHeader("Authorization"));
+		String idUsuario = "" + claims.get("id_user");
+		boolean hasRole = Boolean.parseBoolean(claims.get("role") + "");
+		Long idUser = Long.parseLong(idUsuario);
+
+		Evento evento = repository.findById(idEvento).get();
+
+		if(evento == null) {
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+
+
+		if(idUser == evento.getUsuario().getId() || hasRole) {
+			try {
+				String urlFoto = evento.verFotos()[nfoto];
+				System.out.println(urlFoto);
+				fireUtil.deletar(urlFoto);
+
+				evento.setImagens(evento.getImagens().replace(urlFoto + ";", ""));
+				repository.save(evento);
+
+
+				return new ResponseEntity<Object>(HttpStatus.OK);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e.getClass().getName());
+				return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}
+
+
+		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
 	}
 
 }

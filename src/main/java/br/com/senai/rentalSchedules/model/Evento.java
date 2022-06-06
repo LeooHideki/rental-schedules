@@ -8,6 +8,9 @@ import javax.persistence.ManyToOne;
 
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Data
 public class Evento {
@@ -27,6 +30,9 @@ public class Evento {
 	
 	//retorna as fotos na forma vetor de string
 		public String[] verFotos() {
-		return imagens.split(";");
+			String arrayEmpty[] = new String[1];
+			arrayEmpty[0]="";
+
+		return imagens == null || imagens.isEmpty() ? arrayEmpty : imagens.split(";");
 		}
 }
