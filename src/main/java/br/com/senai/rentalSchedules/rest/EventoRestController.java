@@ -10,6 +10,7 @@ import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.senai.rentalSchedules.annotation.PrivadoAdm;
+import br.com.senai.rentalSchedules.model.Solicitacao;
 import br.com.senai.rentalSchedules.util.EnviaEmailService;
 import br.com.senai.rentalSchedules.util.FirebaseUtil;
 
@@ -56,7 +57,7 @@ public class EventoRestController {
 		return ResponseEntity.ok(repository.findAll());
 	}
 
-	@Publico
+	@Privado
 	@RequestMapping(value = "", method = RequestMethod.POST)
 	public ResponseEntity<Object> criarEventoMultiplo(@RequestBody ArrayList<Evento> evento) {
 		boolean hasError = false;
@@ -291,6 +292,38 @@ public class EventoRestController {
 
 
 		return new ResponseEntity<Object>(HttpStatus.UNAUTHORIZED);
+	}
+
+	@PrivadoAdm
+	@RequestMapping(value = "/solicitacao", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<Object> solicitacaoDeAssunto(@RequestBody Solicitacao solicitacao) {
+		Evento evento = repository.findById(solicitacao.getIdEvento()).get();
+		if(evento == null) {
+			return new ResponseEntity<Object>(HttpStatus.BAD_REQUEST);
+		}
+
+		String SOLICITE_TITULO = "Reinvidicação de evento - De : " + solicitacao.getNomeDe() + " - evento do dia " + evento.getDataReservada() + " - " + evento.getTitulo();
+		String HTML_MOTIVO = "<div> " +
+				"<h1>Este é um email automatico para reivindicacão de email, seu evento não será cancelado, mas por favor entre em contato com o solicitante!</h1>" +
+				"<h1>"+ solicitacao.getDe()  +" solicita o evento " + evento.getTitulo() + " </h1>" +
+				"<p>" + solicitacao.getMotivo() + "</p>" +
+				"<p>Email para contato - "+ solicitacao.getDe()  +"</p>" +
+				"</div>";
+		try {
+			send.enviaEmail(
+					solicitacao.getPara(),
+					HTML_MOTIVO,
+					SOLICITE_TITULO
+			);
+
+			return new ResponseEntity<Object>(HttpStatus.ACCEPTED);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Erro erro = new Erro(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), e.getClass().getName());
+			return new ResponseEntity<Object>(erro, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+
 	}
 
 }
